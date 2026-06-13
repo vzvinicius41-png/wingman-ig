@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>WINGMAN IG 🔥v1.0</title>
+<meta name="theme-color" content="#e1306c">
+<style>
+:root{ --pink:#e1306c; --purple:#833ab4; --bg:#0b0b0f; --card:#18181d; --bubble-ai:#23232b; --bubble-me:#d92d6b; --muted:#9a9ab0; --border:#2a2a35; --ok:#2ecc71; --err:#ff6b6b; }
+*{box-sizing:border-box;margin:0;padding:0} 
+body{font-family: -apple-system, Inter, system-ui, 'Segoe UI', Roboto, sans-serif; background:var(--bg); color:#fff; height:100dvh; display:flex; flex-direction:column; overflow:hidden}
+.header{background:linear-gradient(135deg,var(--purple),var(--pink)); padding:12px 16px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0}
+.header .title{font-weight:800; font-size:17px}
+.header .sub{font-size:11px; opacity:.9}
+.icon-btn{background:rgba(255,255,255,.15); border:none; color:#fff; padding:7px 12px; border-radius:20px; font-size:12px; cursor:pointer}
+.chat-area{flex:1; overflow-y:auto; padding:16px; max-width:680px; width:100%; margin:0 auto; display:flex; flex-direction:column; gap:12px}
+.msg{max-width:82%; padding:11px 14px; border-radius:18px; font-size:15px; line-height:1.45; }
+.msg.ai{align-self:flex-start; background:var(--bubble-ai); border-bottom-left-radius:6px}
+.msg.me{align-self:flex-end; background:var(--bubble-me); border-bottom-right-radius:6px}
+.msg.err{align-self:flex-start; background:#2a1518; border:1px solid #552830; color:#ffb8c0}
+.msg img.thumb{max-width:160px; border-radius:10px; display:inline-block; margin:2px}
+.suggestions{display:flex; flex-direction:column; gap:8px; margin-top:4px; align-self:flex-start; max-width:88%; width:100%}
+.suggestion-btn{background:#1f1f27; border:1.5px solid #343440; color:#fff; text-align:left; padding:11px 14px 11px 38px; border-radius:14px; font-size:14.5px; cursor:pointer; position:relative; transition:.12s}
+.suggestion-btn.selected{border-color:var(--pink); background:#2a1e28}
+.suggestion-btn small{display:block; color:var(--pink); font-size:10px; text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; font-weight:700}
+.suggestion-btn .why{font-size:11.5px; color:#7a7a90; margin-top:4px; font-style:italic}
+.suggestion-btn .suggestion-text{white-space:pre-wrap; overflow-wrap:anywhere}
+.suggestion-btn .check{position:absolute; left:12px; top:14px; width:18px; height:18px; border-radius:5px; border:1.5px solid #555; display:flex; align-items:center; justify-content:center; font-size:11px}
+.suggestion-btn.selected .check{background:var(--pink); border-color:var(--pink)}
+.suggestion-actions{display:flex; gap:8px; margin-top:4px}
+.suggestion-actions button{flex:1; background:#262631; border:1px solid #3a3a44; color:#fff; padding:10px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer}
+.suggestion-actions button.primary{background:linear-gradient(135deg,var(--purple),var(--pink)); border:none}
+.typing{align-self:flex-start; color:var(--muted); font-size:13px}
+.input-bar{border-top:1px solid var(--border); background:#141418; padding:10px 12px; flex-shrink:0}
+.input-row{max-width:680px; margin:0 auto; display:flex; gap:8px; align-items:flex-end}
+.attach-btn{background:#23232b; border:none; color:#ccc; width:42px; height:42px; border-radius:12px; font-size:20px; cursor:pointer; flex-shrink:0}
+.text-input{flex:1; background:#1e1e25; border:1px solid var(--border); color:#fff; border-radius:14px; padding:11px 14px; font-size:15px; resize:none; max-height:110px; min-height:42px; font-family:inherit; outline:none}
+.send-btn{background:linear-gradient(135deg,var(--purple),var(--pink)); border:none; color:#fff; width:42px; height:42px; border-radius:12px; font-size:18px; cursor:pointer; flex-shrink:0}
+.send-btn:disabled{opacity:.5}
+.preview-bar{max-width:680px; margin:0 auto 8px auto; display:none}
+.preview-bar.show{display:block}
+.preview-scroll{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px}
+.preview-item{position:relative; flex-shrink:0}
+.preview-item img{width:64px; height:64px; object-fit:cover; border-radius:10px; border:1px solid var(--border)}
+.preview-item .x{position:absolute; top:-6px; right:-6px; background:#111; border:1px solid #444; color:#fff; border-radius:50%; width:22px; height:22px; font-size:12px; cursor:pointer}
+.style-bar{max-width:680px; margin:0 auto; padding:0 12px 6px 12px; display:flex; gap:6px; flex-wrap:wrap; font-size:11.5px; align-items:center}
+.chip{background:#1e1e25; border:1px solid var(--border); color:#aaa; padding:5px 10px; border-radius:20px; cursor:pointer; white-space:nowrap; user-select:none}
+.chip.active{background:var(--pink); color:#fff; border-color:var(--pink)}
+.quality-select{background:#1e1e25; border:1px solid #3a3a44; color:#fff; border-radius:20px; padding:5px 10px; font-size:11.5px; outline:none; max-width:100%}
+.select-label{color:var(--muted); font-size:11px; font-weight:700; margin-right:2px; white-space:nowrap}
+.select-field{background:#1e1e25; border:1px solid #3a3a44; color:#fff; border-radius:20px; padding:7px 10px; font-size:12px; outline:none; min-width:105px; max-width:100%}
+.control-row{max-width:680px; margin:0 auto; padding:0 12px 6px 12px; display:flex; gap:7px; flex-wrap:wrap; align-items:center}
+.control-group{display:flex; gap:4px; align-items:center; min-width:0}
+.modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.82); display:flex; align-items:center; justify-content:center; z-index:99; padding:16px}
+.modal{background:#1b1b22; border:1px solid var(--border); border-radius:18px; padding:20px; max-width:440px; width:100%}
+.modal h3{margin-bottom:10px}
+.modal label{font-size:11px; color:var(--muted); text-transform:uppercase; display:block; margin:12px 0 5px}
+.modal input, .modal select{width:100%; background:#12121a; border:1px solid var(--border); color:#fff; border-radius:10px; padding:11px; font-size:14px}
+.btn-wide{background:linear-gradient(135deg,var(--purple),var(--pink)); border:none; color:#fff; padding:13px; border-radius:12px; width:100%; font-weight:700; margin-top:14px; cursor:pointer}
+.btn-ghost{background:#2a2a35; border:none; color:#fff; padding:11px; border-radius:12px; width:100%; font-weight:600; margin-top:8px; cursor:pointer}
+.small{font-size:12px; color:var(--muted); line-height:1.5}
+.ok{color:var(--ok)} .err{color:var(--err)}
+a{color:#ff7aa8}
+.hidden{display:none}
+.status-toast{position:fixed; bottom:76px; left:50%; transform:translateX(-50%); background:#22222c; border:1px solid #3a3a44; padding:9px 14px; border-radius:30px; font-size:12.5px; color:#ffd0d0; z-index:50; max-width:90%; text-align:center}
+.key-status{font-size:12px; margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="title">WINGMAN IG 🔥v1.0</div>
+    <div class="sub" id="modeLabel">IA: off 🔴</div>
+  </div>
+  <div>
+    <button class="icon-btn" onclick="clearChat()" title="Apagar chat">🗑️</button>
+  </div>
+</div>
+
+<div class="chat-area" id="chat"></div>
+
+<div class="control-row" id="controlRow">
+  <div class="control-group">
+    <span class="select-label">Estilo</span>
+    <select id="styleSelect" class="select-field">
+      <option value="auto" selected>Automático</option>
+      <option value="natural">Natural</option>
+      <option value="pegador">Pegador</option>
+      <option value="direto">Direto</option>
+      <option value="sarcastico">Zoera</option>
+      <option value="fofo">Fofo</option>
+      <option value="cavalheiro">Cavalheiro</option>
+    </select>
+  </div>
+
+  <div class="control-group">
+    <span class="select-label">Tom</span>
+    <select id="toneSelect" class="select-field">
+      <option value="auto" selected>Automático</option>
+      <option value="leve">Leve</option>
+      <option value="ousado">Ousado</option>
+      <option value="safado">Safado</option>
+      <option value="romantico">Romântico</option>
+      <option value="engracado">Engraçado</option>
+      <option value="provocador">Provocador</option>
+      <option value="carinhoso">Carinhoso</option>
+    </select>
+  </div>
+
+  <div class="control-group">
+    <span class="select-label">Modo</span>
+    <select id="qualitySelect" class="select-field">
+      <option value="auto" selected>Automático</option>
+      <option value="rapida">Rápida</option>
+      <option value="caprichada">Caprichada</option>
+      <option value="mestre">Mestre</option>
+      <option value="pro">PRO Gemini + Internet</option>
+    </select>
+  </div>
+</div>
+
+<div class="input-bar">
+  <div class="preview-bar" id="previewBar">
+    <div class="preview-scroll" id="previewScroll"></div>
+    <div class="small" style="margin-top:4px">Toque no ✕ pra remover. Pode enviar várias fotos.</div>
+  </div>
+  <div class="input-row">
+    <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Enviar fotos">📎</button>
+    <input type="file" id="fileInput" accept="image/*" multiple class="hidden">
+    <textarea id="textInput" class="text-input" placeholder="Descreva o perfil dela, ou mande fotos..." rows="1"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-bg hidden" id="settingsModal">
+  <div class="modal">
+    <h3>Configurar API – obrigatório</h3>
+    <p class="small">O Wingman IG 🔥v1.0 já vem com Gemini configurado e humanizador interno automático.</p>
+    
+    <label>Provedor</label>
+    <select id="setProvider">
+      <option value="gemini" selected>Gemini Google – com visão (recomendado)</option>
+      <option value="groq">Groq – grátis, rápido</option>
+    </select>
+
+    <div id="keyBox">
+      <label>API Key</label>
+      <input type="password" id="setApiKey" placeholder="Cole sua key aqui">
+      <p class="small" id="keyHelp" style="margin-top:6px">Gemini: começa com <b>AIza...</b> ou <b>AQ....</b> – pegue em <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a><br>Groq: começa com <b>gsk_...</b> – <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a></p>
+    </div>
+
+    <label>Humanizador interno antes de mostrar</label>
+    <select id="setHumanizerProvider">
+      <option value="gemini" selected>Ligado – IA interna sem API extra</option>
+      <option value="off">Desligado</option>
+    </select>
+
+    <label>Força do humanizador</label>
+    <select id="setHumanizerIntensity">
+      <option value="light">Leve – muda pouco</option>
+      <option value="medium">Médio – natural</option>
+      <option value="aggressive" selected>Forte – mais humano</option>
+    </select>
+    <p class="small" style="margin-top:6px">Não precisa de API de humanizador. Ele usa a própria IA que você já configurou para fazer uma segunda passada e deixar a mensagem com cara de direct real antes de aparecer nos cards.</p>
+
+    <button class="btn-wide" onclick="saveSettings()">Salvar chave</button>
+    <button class="btn-ghost" onclick="testApi()">Testar conexão</button>
+    <button class="btn-ghost" onclick="testHumanizer()">Testar humanizador</button>
+    <div id="keyStatus" class="key-status"></div>
+    <button class="btn-ghost" onclick="closeSettings()">Fechar</button>
+  </div>
+</div>
+
+<div id="toast" class="status-toast hidden"></div>
+
+<script>
+// ---------- safe storage ----------
+const store = (()=>{ try{ const t='__w'; localStorage.setItem(t,t); localStorage.removeItem(t); return localStorage; } catch(e){ const mem={}; return { getItem:k=>mem[k]||null, setItem:(k,v)=>mem[k]=v, removeItem:k=>delete mem[k] }; }})();
+
+// API Gemini embutida a pedido do usuário. Não compartilhe este arquivo publicamente.
+const DEFAULT_PROVIDER = 'gemini';
+const DEFAULT_GEMINI_KEY = 'AQ.Ab8RN6Jf3uOU0dPYdXZOrxthoR0Y8GFPcsACm-VXTbdJx5nYsQ';
+
+const $ = id => document.getElementById(id);
+let currentStyles = ['auto'];
+let currentTom = 'auto';
+let attachedImages = [];
+let quality = 'auto';
+
+const STYLE_LABELS = {
+  auto:'Automático', natural:'Natural', pegador:'Pegador', direto:'Direto', sarcastico:'Zoera', fofo:'Fofo', cavalheiro:'Cavalheiro'
+};
+const TOM_LABELS = {
+  auto:'Automático', leve:'Leve', ousado:'Ousado', safado:'Safado', romantico:'Romântico', engracado:'Engraçado', provocador:'Provocador', carinhoso:'Carinhoso'
+};
+
+const STYLE_PROMPTS = {
+  auto: `Estilo automático: observe as fotos/perfil antes de escrever e escolha sozinho o melhor jeito de chegar nela. Decida internamente se combina mais natural, pegador, direto, zoeira, fofo ou cavalheiro. Use o estilo que tiver mais chance de resposta para aquela menina específica, sem parecer IA.`,
+  natural: `Estilo fixo: português brasileiro de direct, jovem e natural. Parece um cara real digitando no celular, sem ensaio e sem cantada pronta. Pode usar "kkk", "pior que", "te falar", "na moral", "cê" quando fizer sentido.`,
+  pegador: `Estilo pegador: confiante e tranquilo, mas sem parecer coach. Dá ideia como quem tem atitude, sem forçar personagem.`,
+  direto: `Estilo direto: curto, limpo, sem rodeio. Fala como pessoa real no Instagram, não como assistente.`,
+  sarcastico: `Estilo zoeira: brincadeira leve, ironia natural e provocação boa. Não humilha, não força intimidade.`,
+  fofo: `Estilo fofo: carinhoso e good vibe, mas sem melosidade de novela. Simples, humano e casual.`,
+  cavalheiro: `Estilo cavalheiro: maduro, educado e charmoso, mas ainda de direct. Nada de "olá", "gostaria", "interessante".`
+};
+const TOM_TXT = {
+  auto: `Tom automático: analise a foto, a pose, a expressão, o contexto, a roupa, o ambiente e a vibe. Escolha sozinho entre leve, ousado, safado discreto, romântico, engraçado, provocador ou carinhoso. Use só o tom que parecer mais natural para ela responder.`,
+  leve: `Tom leve: flerte sutil, seguro, sem pressão. Parece primeira mensagem normal.`,
+  ousado: `Tom ousado: mais na cara, confiante, provocador e com atitude. Sem ser vulgar.`,
+  safado: `Tom safado: insinuante e com malícia leve, tipo duplo sentido de direct. Não usar sexual explícito, palavrão pesado, pressão ou grosseria.`,
+  romantico: `Tom romântico: elogia a vibe, olhar ou energia de forma sincera. Doce, mas sem ficar meloso ou carente.`,
+  engracado: `Tom engraçado: usa humor de resposta de story, leve e natural. A graça tem que parecer espontânea.`,
+  provocador: `Tom provocador: cutuca de leve, cria curiosidade e tensão boa. Sem ofender.`,
+  carinhoso: `Tom carinhoso: gentil, próximo e fofo na medida. Sem parecer declaração.`
+};
+const TONE_EXAMPLES = {
+  auto: [
+    'pior que essa foto aí tem um jeito diferente kkk',
+    'te falar, essa foto entregou uma vibe boa demais',
+    'não sei se foi sem querer, mas essa foto chama atenção real'
+  ],
+  leve: [
+    'pior que essa foto ficou boa demais kkk',
+    'te falar, tua vibe nessa foto ficou diferente',
+    'não sei se era a intenção, mas essa foto chamou atenção real'
+  ],
+  ousado: [
+    'cê tem uma cara de quem dá trabalho... pior que isso é justamente o problema kkk',
+    'essa foto aí foi só pra testar quem tem atitude de chamar?',
+    'vou fingir costume não, seu estilo entrega demais'
+  ],
+  safado: [
+    'cê posta assim e quer que a pessoa finja normalidade? aí complica kkk',
+    'essa foto tem uma maldade disfarçada que eu reparei sim',
+    'se essa era a intenção, funcionou mais do que devia kkk'
+  ],
+  romantico: [
+    'tem uma calma nessa foto que passa uma vibe boa de verdade',
+    'não sei explicar, mas teu olhar nessa foto ficou muito bonito',
+    'gostei da energia dessa foto, parece simples mas prende atenção'
+  ],
+  engracado: [
+    'essa foto tem cara de quem some e ainda acha ruim se sentirem falta kkk',
+    'cê tem mó cara de quem fala "sou tranquila" e causa o caos',
+    'essa pose aí foi casual ou foi golpe calculado? kkk'
+  ],
+  provocador: [
+    'cê tem uma vibe de quem sabe exatamente o efeito que causa',
+    'essa foto ficou perigosa e eu acho que você sabe disso',
+    'não vou elogiar muito não, vai que você acostuma kkk'
+  ],
+  carinhoso: [
+    'essa foto ficou muito tua vibe, leve e bonita de um jeito simples',
+    'gostei do teu jeitinho nessa foto, passou uma energia boa',
+    'teu sorriso/jeito nessa foto passa uma paz boa'
+  ]
+};
+
+function showToast(msg, ms=3000){ const t=$('toast'); t.textContent=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'), ms); }
+
+// Settings
+function openSettings(){ $('settingsModal').classList.remove('hidden'); updateKeyHelp(); }
+function closeSettings(){ $('settingsModal').classList.add('hidden'); }
+function updateKeyHelp(){}
+document.getElementById('setProvider').addEventListener('change', updateKeyHelp);
+
+function saveSettings(){
+  const provider=$('setProvider').value;
+  const key=$('setApiKey').value.trim();
+  if(!key){ alert('Cole sua API key'); return; }
+  store.setItem('wingman_provider', provider);
+  store.setItem('wingman_key_'+provider, key);
+  saveHumanizerSettingsFromForm();
+  updateModeLabel();
+  showToast('Chave salva: ' + provider.toUpperCase());
+  testApi();
+}
+function getConfig(){
+  return {provider: DEFAULT_PROVIDER, key: DEFAULT_GEMINI_KEY};
+}
+function saveHumanizerSettingsFromForm(){
+  if(!$('setHumanizerProvider')) return;
+  const provider = $('setHumanizerProvider').value === 'off' ? 'off' : 'gemini';
+  store.setItem('wingman_humanizer_provider', provider);
+  store.setItem('wingman_humanizer_intensity', $('setHumanizerIntensity').value || 'aggressive');
+}
+function getHumanizerConfig(){
+  // Migração: se veio de versão antiga com humanizador externo salvo, força o interno.
+  let provider = store.getItem('wingman_humanizer_provider') || 'gemini';
+  if(provider !== 'off' && provider !== 'gemini') provider = 'gemini';
+  return {
+    provider,
+    key: '',
+    intensity: store.getItem('wingman_humanizer_intensity') || 'aggressive'
+  };
+}
+function humanizerLabel(){
+  const h = getHumanizerConfig().provider;
+  if(h === 'off') return 'desligado';
+  return 'interno sem API extra';
+}
+function updateModeLabel(){
+  const {key} = getConfig();
+  const status = store.getItem('wingman_api_status') || 'ok';
+  const isOn = !!key && status !== 'fail';
+  $('modeLabel').textContent = isOn ? 'IA: on 🟢' : 'IA: off 🔴';
+  $('modeLabel').style.color = isOn ? '#9affb6' : '#ff8a8a';
+}
+
+
+function cleanGeminiModelName(raw){
+  return String(raw || '').replace(/^models\//, '').trim();
+}
+function geminiModelScore(name, preferPro=false){
+  const n = cleanGeminiModelName(name).toLowerCase();
+  const isTextModel = n.startsWith('gemini-') && !n.includes('tts') && !n.includes('image') && !n.includes('embedding');
+  if(!isTextModel) return 999;
+
+  if(preferPro){
+    if(n === 'gemini-3.1-pro-preview') return 1;
+    if(n.includes('3.1') && n.includes('pro')) return 2;
+    if(n === 'gemini-2.5-pro') return 3;
+    if(n.includes('2.5') && n.includes('pro')) return 4;
+    if(n === 'gemini-3.5-flash') return 5;
+    if(n.includes('3') && n.includes('flash') && !n.includes('lite')) return 6;
+    if(n.includes('2.5') && n.includes('flash') && !n.includes('lite')) return 7;
+    if(n.includes('2.0') && n.includes('flash') && !n.includes('lite')) return 8;
+    if(n.includes('flash')) return 20;
+    return 99;
+  }
+
+  if(n === 'gemini-3.5-flash') return 1;
+  if(n.includes('3') && n.includes('flash') && !n.includes('lite')) return 2;
+  if(n.includes('2.5') && n.includes('flash') && !n.includes('lite')) return 3;
+  if(n.includes('2.5') && n.includes('pro')) return 4;
+  if(n.includes('2.0') && n.includes('flash') && !n.includes('lite')) return 5;
+  if(n.includes('flash-latest')) return 6;
+  if(n.includes('flash')) return 7;
+  if(n.includes('pro')) return 8;
+  return 99;
+}
+function pushGeminiCandidate(list, seen, model, version){
+  model = cleanGeminiModelName(model);
+  version = version || 'v1beta';
+  if(!model || !/^gemini-/i.test(model)) return;
+  const id = version + '|' + model;
+  if(seen.has(id)) return;
+  seen.add(id);
+  list.push({model, version});
+}
+async function getGeminiCandidates(apiKey, preferPro=false){
+  const candidates = [];
+  const seen = new Set();
+  const storedModel = cleanGeminiModelName(store.getItem('wingman_gemini_model'));
+  const storedVersion = store.getItem('wingman_gemini_version') || 'v1beta';
+
+  // 1) tenta primeiro o modelo que já funcionou antes neste aparelho
+  if(storedModel) pushGeminiCandidate(candidates, seen, storedModel, storedVersion);
+
+  // 2) pergunta para a própria API quais modelos existem na sua key
+  for(const ver of ['v1beta','v1']){
+    try{
+      const res = await fetch('https://generativelanguage.googleapis.com/'+ver+'/models?key='+encodeURIComponent(apiKey));
+      if(!res.ok) continue;
+      const data = await res.json();
+      const models = (data.models || [])
+        .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+        .map(m => cleanGeminiModelName(m.name))
+        .filter(Boolean)
+        .sort((a,b) => geminiModelScore(a, preferPro) - geminiModelScore(b, preferPro));
+      models.forEach(m => pushGeminiCandidate(candidates, seen, m, ver));
+    }catch(e){ /* se ListModels falhar por CORS/rede, cai na lista fixa abaixo */ }
+  }
+
+  // 3) lista fixa de segurança para contas que não deixam listar modelos
+  [
+    ['gemini-3.1-pro-preview','v1beta'],
+    ['gemini-2.5-pro','v1beta'],
+    ['gemini-3.5-flash','v1beta'],
+    ['gemini-3-flash-preview','v1beta'],
+    ['gemini-2.5-flash','v1beta'],
+    ['gemini-2.5-flash-lite','v1beta'],
+    ['gemini-2.0-flash','v1beta'],
+    ['gemini-2.0-flash-lite','v1beta'],
+    ['gemini-flash-latest','v1beta'],
+    ['gemini-3.5-flash','v1'],
+    ['gemini-2.5-pro','v1'],
+    ['gemini-2.5-flash','v1'],
+    ['gemini-2.0-flash','v1']
+  ].sort((a,b)=>geminiModelScore(a[0], preferPro)-geminiModelScore(b[0], preferPro))
+   .forEach(x => pushGeminiCandidate(candidates, seen, x[0], x[1]));
+
+  return candidates;
+}
+async function fetchGeminiGenerate(apiKey, candidate, parts, generationConfig, extraBody={}){
+  const model = cleanGeminiModelName(candidate.model || candidate);
+  const version = candidate.version || 'v1beta';
+  const url = 'https://generativelanguage.googleapis.com/'+version+'/models/'+model+':generateContent?key='+encodeURIComponent(apiKey);
+  const body = Object.assign({ contents:[{parts}], generationConfig }, extraBody || {});
+  return fetch(url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+}
+
+function buildThinkingConfig(model, proMode=false){
+  const n = cleanGeminiModelName(model).toLowerCase();
+  if(!proMode) return null;
+  if(n.includes('3.')) return {thinkingLevel:'high'};
+  if(n.includes('2.5')) return {thinkingBudget:-1};
+  return null;
+}
+
+
+async function testApi(){
+  const statusEl = $('keyStatus');
+  const inputKey = $('setApiKey').value.trim() || getConfig().key;
+  const inputProvider = $('setProvider').value;
+  if(!inputKey){ statusEl.innerHTML = '<span class="err">Cole uma key primeiro</span>'; return; }
+  store.setItem('wingman_provider', inputProvider);
+  store.setItem('wingman_key_'+inputProvider, inputKey);
+  statusEl.innerHTML = 'Testando…';
+  try{
+    const testPrompt = 'Responda apenas com a palavra "ok"';
+    let ok = false; let used = '';
+    if(inputProvider === 'groq'){
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+inputKey},
+        body: JSON.stringify({model:'llama-3.1-8b-instant', messages:[{role:'user', content:testPrompt}], max_tokens:10})
+      });
+      if(!res.ok) throw await res.text();
+      ok = true; used = 'llama-3.1-8b-instant';
+    } else {
+      // Gemini – descobre automaticamente os modelos disponíveis para sua key
+      const candidates = await getGeminiCandidates(inputKey);
+      let lastErr = '';
+      for(const cand of candidates){
+        statusEl.innerHTML = 'Testando '+cand.model+' @ '+cand.version+'…';
+        try{
+          const res = await fetchGeminiGenerate(inputKey, cand, [{text:testPrompt}], {maxOutputTokens:10});
+          if(res.ok){
+            ok = true;
+            used = cand.model+' @ '+cand.version;
+            store.setItem('wingman_gemini_model', cand.model);
+            store.setItem('wingman_gemini_version', cand.version);
+            break;
+          }
+          lastErr = cand.model+' @ '+cand.version+' - '+(await res.text());
+        }catch(e){ lastErr = cand.model+' @ '+cand.version+' - '+String(e); }
+      }
+      if(!ok) throw lastErr.slice(0,300);
+    }
+    if(ok){
+      store.setItem('wingman_api_status', 'ok');
+      statusEl.innerHTML = '<span class="ok">✓ API funcionando! Modelo: '+used+'<br>Pode fechar.</span>';
+      updateModeLabel();
+    }
+  } catch(e){
+    store.setItem('wingman_api_status', 'fail');
+    updateModeLabel();
+    statusEl.innerHTML = '<span class="err">Erro: ' + String(e).slice(0,300) + '</span><br><span class="small">Gemini keys: AIza... / AQ.... Groq: gsk_...</span>';
+  }
+}
+
+async function testHumanizer(){
+  saveHumanizerSettingsFromForm();
+  const statusEl = $('keyStatus');
+  statusEl.innerHTML = 'Testando humanizador…';
+  try{
+    const base = [{titulo:'Teste', texto:'Achei seu perfil interessante, você parece ter uma energia muito legal.'}];
+    const out = await humanizeReplySet(base, 'teste', 'caprichada');
+    statusEl.innerHTML = '<span class="ok">✓ Humanizador funcionando.</span><br><span class="small">Exemplo: '+escapeHtml(out[0]?.texto || '')+'</span>';
+    updateHint();
+  }catch(e){
+    statusEl.innerHTML = '<span class="err">Erro no humanizador: '+escapeHtml(String(e).slice(0,250))+'</span>';
+  }
+}
+
+function escapeHtml(s){
+  return String(s || '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+}
+
+// UI helpers
+function addMessage(html, who='ai', extraClass=''){
+  const div=document.createElement('div');
+  div.className='msg '+who + (extraClass?' '+extraClass:'');
+  div.innerHTML=html;
+  $('chat').appendChild(div);
+  $('chat').scrollTop=$('chat').scrollHeight;
+}
+function addUserMessage(text, imgs){
+  let html='';
+  if(imgs && imgs.length){ imgs.forEach(i=> { html += `<img class="thumb" src="${i.dataUrl}">`; }); }
+  if(text) html += (html?'<br>':'') + text.replace(/</g,'&lt;');
+  if(!html) html='(fotos enviadas)';
+  addMessage(html,'me');
+}
+function escapeHtml(value){
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function addAIMessage(text){ addMessage(escapeHtml(text).replace(/\n/g,'<br>'),'ai'); }
+function addErrorMessage(text){ addMessage('❌ ' + escapeHtml(text).replace(/\n/g,'<br>'), 'ai', 'err'); }
+
+let typingEl = null; let typingTimer = null;
+function addTypingSteps(steps){
+  removeTyping();
+  const d=document.createElement('div'); d.className='typing'; d.id='typing';
+  $('chat').appendChild(d);
+  let i=0;
+  function tick(){ d.innerHTML = '🧠 <b>'+steps[i]+'</b>'; $('chat').scrollTop=$('chat').scrollHeight; i=(i+1)%steps.length; }
+  tick(); typingTimer = setInterval(tick, 1200);
+}
+function removeTyping(){ if(typingTimer){ clearInterval(typingTimer); typingTimer=null; } const t=document.getElementById('typing'); if(t) t.remove(); }
+
+function addSuggestions(list){
+  const wrap=document.createElement('div'); wrap.className='suggestions';
+  const selected = new Set();
+  list.forEach((rawItem,i)=>{
+    const item = rawItem || {};
+    const title = item.titulo || ('Opção '+(i+1));
+    const text = item.texto || item.mensagem || item.abertura || item.resposta || item.text || '';
+    const why = item.why || item.porque || item.motivo || '';
+    const b=document.createElement('button'); b.className='suggestion-btn';
+    let whyHtml = why ? `<div class="why">💡 ${escapeHtml(why)}</div>` : '';
+    b.innerHTML=`<div class="check"></div><small>${escapeHtml(title)}</small><div class="suggestion-text">${escapeHtml(text).replace(/\n/g,'<br>')}</div>${whyHtml}`;
+    b.onclick = ()=>{
+      if(selected.has(i)){ selected.delete(i); b.classList.remove('selected'); b.querySelector('.check').textContent=''; }
+      else { selected.add(i); b.classList.add('selected'); b.querySelector('.check').textContent='✓'; }
+      updateActionBtn();
+    };
+    b.ondblclick = (ev)=>{ ev.stopPropagation(); navigator.clipboard.writeText(text).catch(()=>{}); showToast('Copiado!'); };
+    wrap.appendChild(b);
+  });
+  const actions=document.createElement('div'); actions.className='suggestion-actions';
+  const copyBtn=document.createElement('button'); copyBtn.className='primary';
+  const clearBtn=document.createElement('button'); clearBtn.textContent='Limpar';
+  actions.appendChild(copyBtn); actions.appendChild(clearBtn);
+  wrap.appendChild(actions);
+  function updateActionBtn(){
+    const n = selected.size;
+    copyBtn.textContent = n===0 ? 'Selecione 1 ou mais' : `Copiar ${n} selecionada${n>1?'s':''}`;
+    copyBtn.disabled = n===0; copyBtn.style.opacity = n===0 ? '0.6' : '1';
+  }
+  updateActionBtn();
+  copyBtn.onclick = ()=>{
+    const texts = [...selected].map(idx=>{
+      const item = list[idx] || {};
+      return item.texto || item.mensagem || item.abertura || item.resposta || item.text || '';
+    }).filter(Boolean);
+    navigator.clipboard.writeText(texts.join('\n')).catch(()=>{});
+    showToast(texts.length+' copiada'+(texts.length>1?'s':'')+'!');
+    texts.forEach(t=> addUserMessage(t, null));
+  };
+  clearBtn.onclick = ()=>{
+    selected.clear();
+    wrap.querySelectorAll('.suggestion-btn.selected').forEach(el=>{ el.classList.remove('selected'); el.querySelector('.check').textContent=''; });
+    updateActionBtn();
+  };
+  $('chat').appendChild(wrap);
+  $('chat').scrollTop=$('chat').scrollHeight;
+}
+
+// selects de estilo / tom / modo
+function updateHint(){
+  // A linha de resumo abaixo dos seletores foi removida da interface.
+  // Esta função fica apenas para manter os seletores funcionando sem erro.
+  return;
+}
+
+const styleSelectEl = document.getElementById('styleSelect');
+if(styleSelectEl){
+  styleSelectEl.addEventListener('change', e=>{
+    currentStyles = [e.target.value];
+    updateHint();
+    showToast('Estilo: ' + (STYLE_LABELS[e.target.value] || e.target.value));
+  });
+}
+
+document.getElementById('toneSelect').addEventListener('change', e=>{
+  currentTom = e.target.value;
+  updateHint();
+  showToast('Tom: ' + (TOM_LABELS[currentTom] || currentTom));
+});
+
+document.getElementById('qualitySelect').addEventListener('change', e=>{
+  quality = e.target.value;
+  updateHint();
+  showToast(e.target.value === 'auto' ? 'Modo: Automático' : e.target.value === 'pro' ? 'Modo PRO: Gemini Pro + busca na internet' : 'Modo: '+quality);
+});
+['setHumanizerProvider','setHumanizerIntensity'].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('change', ()=>{ saveHumanizerSettingsFromForm(); updateHint(); showToast('Humanizador: '+humanizerLabel()); });
+});
+const hk = document.getElementById('setHumanizerKey');
+if(hk) hk.addEventListener('blur', saveHumanizerSettingsFromForm);
+
+// image attach
+document.getElementById('fileInput').addEventListener('change', e=>{
+  const files = [...e.target.files]; if(!files.length) return;
+  let loaded = 0;
+  files.forEach(f=>{
+    const r=new FileReader();
+    r.onload=ev=>{
+      attachedImages.push({dataUrl:ev.target.result, mime:f.type, name:f.name});
+      renderPreviews(); loaded++;
+      if(loaded===files.length) showToast(files.length+' foto(s) anexada(s)');
+    };
+    r.readAsDataURL(f);
+  });
+  e.target.value='';
+});
+function renderPreviews(){
+  const scroll=$('previewScroll');
+  scroll.innerHTML='';
+  attachedImages.forEach((img, idx)=>{
+    const div=document.createElement('div'); div.className='preview-item';
+    div.innerHTML=`<img src="${img.dataUrl}"><button class="x">✕</button>`;
+    div.querySelector('.x').onclick = ()=>{ attachedImages.splice(idx,1); renderPreviews(); if(attachedImages.length===0) clearImage(); };
+    scroll.appendChild(div);
+  });
+  $('previewBar').classList.toggle('show', attachedImages.length>0);
+}
+function clearImage(){ attachedImages=[]; renderPreviews(); }
+
+// send
+document.getElementById('textInput').addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }});
+
+async function sendMessage(){
+  const {key} = getConfig();
+  if(!key){ showToast('IA: off 🔴'); return; }
+  const text=$('textInput').value.trim();
+  if(!text && attachedImages.length===0){ showToast('Escreva algo ou anexe fotos 📎'); return; }
+  const imgsToSend = [...attachedImages];
+  addUserMessage(text, imgsToSend);
+  $('textInput').value='';
+  clearImage();
+  await generateReplies(text, imgsToSend);
+}
+
+async function generateReplies(userText, images){
+  const q = document.getElementById('qualitySelect').value;
+  quality = q;
+  const steps = q==='auto' ? ['Observando as fotos...','Detectando a vibe dela...','Escolhendo estilo, tom e modo...','Criando a melhor abordagem...'] : q==='rapida' ? ['Gerando...'] : q==='caprichada' ? ['Analisando fotos...','Lendo bio...','Criando mensagens naturais...'] : q==='pro' ? ['Ativando Gemini PRO...','Buscando referências na internet...','Filtrando o que parece direct real...','Criando base da mensagem...'] : ['Análise profunda do perfil...','Identificando ganchos...','Construindo abordagem natural...','Refinando...'];
+  addTypingSteps(steps);
+  $('sendBtn').disabled=true;
+  try{
+    const replies = await callAI(userText, images, quality);
+    removeTyping();
+    addTypingSteps(['Passando no humanizador...','Tirando cara de IA...','Deixando com jeito de direct real...']);
+    const finalReplies = await humanizeReplySet(replies, userText, quality);
+    removeTyping();
+    store.setItem('wingman_api_status', 'ok');
+    updateModeLabel();
+    addAIMessage('Pronto. 3 ideias humanizadas pra mandar:');
+    addSuggestions(finalReplies);
+  } catch(e){
+    removeTyping();
+    store.setItem('wingman_api_status', 'fail');
+    updateModeLabel();
+    addErrorMessage('Erro na IA: ' + e + '\n\nTenta mandar de novo. Se continuar, pode ser limite ou bloqueio temporário da API.');
+    showToast('IA: off 🔴');
+  } finally { $('sendBtn').disabled=false; }
+}
+
+// ---- IA REAL ONLY - SEM DEMO ----
+function repairJSONText(s){
+  return String(s || '')
+    .replace(/```json/gi,'')
+    .replace(/```/g,'')
+    .replace(/[“”]/g,'"')
+    .replace(/[‘’]/g,"'")
+    .replace(/,\s*([}\]])/g,'$1')
+    .trim();
+}
+function findMatchingBracket(str, start, openChar, closeChar){
+  let depth=0, inString=false, quote='', esc=false;
+  for(let i=start; i<str.length; i++){
+    const ch=str[i];
+    if(inString){
+      if(esc){ esc=false; continue; }
+      if(ch==='\\'){ esc=true; continue; }
+      if(ch===quote){ inString=false; quote=''; }
+      continue;
+    }
+    if(ch==='"' || ch==="'"){ inString=true; quote=ch; continue; }
+    if(ch===openChar) depth++;
+    if(ch===closeChar){ depth--; if(depth===0) return i; }
+  }
+  return -1;
+}
+function extractArrayAfterKey(str, key){
+  const re = new RegExp("[\"\']?"+key+"[\"\']?\\s*:", "i");
+  const m = re.exec(str);
+  if(!m) return null;
+  const start = str.indexOf('[', m.index);
+  if(start < 0) return null;
+  const end = findMatchingBracket(str, start, '[', ']');
+  return end > start ? str.slice(start, end+1) : null;
+}
+function decodeJsonString(s){
+  try{ return JSON.parse('"'+s+'"'); }
+  catch(e){ return String(s).replace(/\\n/g,'\n').replace(/\\"/g,'"').replace(/\\\\/g,'\\'); }
+}
+function looksLikeJsonTrash(s){
+  const t = String(s || '').trim();
+  return !t || /^[\{\}\[\],:]+$/.test(t) || /^["']?\s*(aberturas|replies|titulo|texto|why|motivo|porque)["']?\s*:?\s*\[?\s*$/i.test(t);
+}
+function normalizeReplies(data){
+  let out = [];
+  if(Array.isArray(data)) out = data;
+  else if(data && typeof data === 'object') out = data.aberturas || data.replies || data.respostas || data.mensagens || [];
+  if(!Array.isArray(out)) out = [out];
+  return out.map((item, i)=>{
+    if(typeof item === 'string') return {titulo:'Opção '+(i+1), texto:item.trim()};
+    if(!item || typeof item !== 'object') return null;
+    const texto = item.texto || item.mensagem || item.abertura || item.resposta || item.frase || item.text || item.content || '';
+    if(!texto || looksLikeJsonTrash(texto)) return null;
+    return {
+      titulo: item.titulo || item.title || ('Opção '+(i+1)),
+      texto: String(texto).trim(),
+      why: item.why || item.porque || item.motivo || ''
+    };
+  }).filter(Boolean).slice(0,3);
+}
+function tryParseCandidate(candidate){
+  try{ return normalizeReplies(JSON.parse(repairJSONText(candidate))); }
+  catch(e){ return []; }
+}
+function parseAIReplies(txt){
+  const clean = repairJSONText(txt);
+  const candidates = [clean];
+  const objStart = clean.indexOf('{');
+  const objEnd = clean.lastIndexOf('}');
+  if(objStart >= 0 && objEnd > objStart) candidates.push(clean.slice(objStart, objEnd+1));
+  if(/^["']?\s*aberturas["']?\s*:/i.test(clean)) candidates.push('{'+clean+'}');
+  const aberturasArray = extractArrayAfterKey(clean, 'aberturas');
+  if(aberturasArray) candidates.push('{"aberturas":'+aberturasArray+'}');
+  const arrStart = clean.indexOf('[');
+  if(arrStart >= 0){
+    const arrEnd = findMatchingBracket(clean, arrStart, '[', ']');
+    if(arrEnd > arrStart) candidates.push(clean.slice(arrStart, arrEnd+1));
+  }
+  for(const c of [...new Set(candidates)].filter(Boolean)){
+    const parsed = tryParseCandidate(c);
+    if(parsed.length) return parsed;
+  }
+
+  // Caso comum do print: a IA devolve partes de JSON sem a chave externa.
+  const objBlocks = clean.match(/\{[\s\S]*?\}/g) || [];
+  const fromBlocks = objBlocks.flatMap(b => tryParseCandidate(b));
+  if(fromBlocks.length) return fromBlocks.slice(0,3);
+
+  // Último reparo: pega valores do campo "texto" mesmo se o JSON vier quebrado.
+  const extracted = [];
+  const textRe = /["'](?:texto|mensagem|abertura|resposta|frase)["']\s*:\s*["']((?:\\.|[^"'\\])*)["']/gi;
+  let m;
+  while((m = textRe.exec(clean)) && extracted.length < 3){
+    const texto = decodeJsonString(m[1]).trim();
+    if(texto && !looksLikeJsonTrash(texto)) extracted.push({titulo:'Opção '+(extracted.length+1), texto});
+  }
+  if(extracted.length) return extracted;
+
+  const lineExtracted = clean.split('\n').map(line=>{
+    const m = line.match(/["']?(?:texto|mensagem|abertura|resposta|frase)["']?\s*:\s*["']?(.+?)["']?\s*,?$/i);
+    return m ? m[1].trim() : '';
+  }).filter(t => t.length > 8 && !looksLikeJsonTrash(t));
+  if(lineExtracted.length) return lineExtracted.slice(0,3).map((texto,i)=>({titulo:'Opção '+(i+1), texto}));
+
+  const lines = clean.split('\n')
+    .map(s=>s.replace(/^[-*"\d\.\)\s]+/,'').trim())
+    .filter(s=>s.length>10 && s.length<3000 && !looksLikeJsonTrash(s) && !/[\{\}\[\]]/.test(s));
+  if(lines.length) return lines.slice(0,3).map((texto,i)=>({titulo:'Opção '+(i+1), texto}));
+
+  throw 'Resposta da IA fora do formato JSON: ' + clean.slice(0,200);
+}
+
+function cleanHumanText(text){
+  let t = String(text || '').trim();
+  t = t.replace(/^(["'“”]+)|(["'“”]+)$/g, '').trim();
+  t = t.replace(/^(olá|oii?|e aí|opa),?\s*(tudo bem\??)?\s*/i, '').trim();
+  t = t.replace(/^achei seu perfil interessante[,\s]*/i, '').trim();
+  t = t.replace(/^percebi que\s*/i, '').trim();
+  t = t.replace(/\s+/g, ' ').trim();
+  return t;
+}
+
+function postProcessReplies(replies){
+  return replies.map((r,i)=>({
+    titulo: r.titulo || ('Opção '+(i+1)),
+    texto: cleanHumanText(r.texto),
+    why: r.why || ''
+  })).filter(r=>r.texto.length > 3).slice(0,3);
+}
+
+function extractHumanizedText(data){
+  if(!data) return '';
+  if(typeof data === 'string') return data;
+  return data.humanizedText || data.humanized_text || data.output || data.result || data.text || data.message || data.data?.humanizedText || data.data?.text || '';
+}
+
+async function callExternalHumanizer(text, cfg){
+  const intensity = cfg.intensity || 'medium';
+  let url = '', body = {}, headers = {'Content-Type':'application/json'};
+  if(cfg.provider === 'humanize_ai_text'){
+    url = 'https://api.humanize-ai-text.com/v1/humanize';
+    headers.Authorization = 'Bearer ' + cfg.key;
+    body = {text};
+  } else if(cfg.provider === 'humanizerai'){
+    url = 'https://humanizerai.com/api/v1/humanize';
+    headers.Authorization = 'Bearer ' + cfg.key;
+    body = {text, intensity};
+  } else {
+    throw 'Humanizador externo inválido';
+  }
+  const res = await fetch(url, {method:'POST', headers, body: JSON.stringify(body)});
+  if(!res.ok) throw (cfg.provider + ' ' + res.status + ' - ' + (await res.text()).slice(0,180));
+  const data = await res.json().catch(async()=> await res.text());
+  const out = extractHumanizedText(data);
+  if(!out) throw 'humanizador externo retornou vazio';
+  return out;
+}
+
+async function humanizeWithExternalProvider(replies, cfg){
+  const out = [];
+  for(const r of replies){
+    const h = await callExternalHumanizer(r.texto, cfg);
+    out.push({...r, texto: cleanHumanText(h)});
+  }
+  return postProcessReplies(out);
+}
+
+async function humanizeWithInternalAI(replies, userText, qualityMode){
+  const {provider, key} = getConfig();
+  if(!key) return replies;
+  const tom = TOM_LABELS[currentTom] || currentTom;
+  const style = currentStyles.map(s=>STYLE_LABELS[s] || s).join(' + ');
+  const cfg = getHumanizerConfig();
+  const intensityTxt = cfg.intensity === 'light' ? 'mude pouco, só retire formalidade' : cfg.intensity === 'medium' ? 'deixe natural e simples' : 'reescreva forte, como direct real, mesmo que mude bastante a frase';
+  const incoming = replies.map((r,i)=>({i:i+1, texto:r.texto, why:r.why || ''}));
+  const prompt = `Você é um amigo brasileiro reescrevendo mensagens de direct do Instagram para parecerem mais humanas.
+
+MISSÃO:
+Reescreva as 3 mensagens abaixo como se fosse um amigo real digitando no direct.
+Tire qualquer cara de IA, cantada pronta, frase bonita demais ou texto de copy.
+Mantenha a intenção e o tom escolhido, mas pode trocar bastante as palavras se ficar mais natural.
+A mensagem precisa parecer espontânea, simples e mandável, como alguém escrevendo no celular.
+
+ESTILO: ${style}
+TOM: ${tom}
+FORÇA DO HUMANIZADOR: ${intensityTxt}
+CONTEXTO: ${userText || 'foto/story/perfil enviado'}
+
+REGRAS:
+- Não use "olá", "achei seu perfil interessante", "percebi que", "sua energia é contagiante", "você parece ser".
+- Não invente nome, local ou detalhe.
+- Pode usar gíria leve: cê, pior que, te falar, kkk, vou mentir não, na moral, aí complica.
+- Não deixe a frase explicativa demais. Direct bom parece comentário natural, não análise.
+- Pode ter uma pequena imperfeição humana: frase curta, pausa, jeito falado.
+- Nada de texto sexual explícito, pressão ou grosseria.
+- Cada saída deve ser só a mensagem pronta.
+
+ENTRADA JSON:
+${JSON.stringify(incoming)}
+
+Responda apenas JSON válido neste formato:
+{"mensagens":["texto 1 humanizado","texto 2 humanizado","texto 3 humanizado"]}`;
+
+  let txt = '';
+  if(provider === 'groq'){
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body: JSON.stringify({model:'llama-3.3-70b-versatile', messages:[{role:'user', content:prompt}], temperature:1.05, max_tokens:2048})
+    });
+    if(!res.ok) return replies;
+    const data = await res.json();
+    txt = data.choices?.[0]?.message?.content || '';
+  } else {
+    const candidates = await getGeminiCandidates(key, qualityMode === 'pro' || qualityMode === 'auto');
+    let lastErr = '';
+    for(const cand of candidates){
+      try{
+        const genConfig = {temperature:1.05, topP:0.98, maxOutputTokens:4096, responseMimeType:'application/json'};
+        const thinkingConfig = buildThinkingConfig(cand.model, qualityMode === 'pro' || qualityMode === 'auto');
+        if(thinkingConfig) genConfig.thinkingConfig = thinkingConfig;
+        const res = await fetchGeminiGenerate(key, cand, [{text:prompt}], genConfig, {});
+        if(res.ok){
+          const data = await res.json();
+          txt = (data.candidates?.[0]?.content?.parts || []).map(p=>p.text || '').join('');
+          if(txt) break;
+        } else lastErr = await res.text();
+      }catch(e){ lastErr = String(e); }
+    }
+    if(!txt){ console.warn('humanizador interno falhou', lastErr); return replies; }
+  }
+
+  try{
+    const clean = repairJSONText(txt);
+    const objStart = clean.indexOf('{');
+    const objEnd = clean.lastIndexOf('}');
+    const data = JSON.parse(objStart >= 0 && objEnd > objStart ? clean.slice(objStart, objEnd+1) : clean);
+    const msgs = Array.isArray(data.mensagens) ? data.mensagens : [];
+    const out = replies.map((r,i)=>({...r, texto: cleanHumanText(msgs[i] || r.texto)}));
+    return postProcessReplies(out);
+  }catch(e){
+    return replies;
+  }
+}
+
+async function humanizeReplySet(replies, userText, qualityMode){
+  let base = postProcessReplies(replies);
+  const cfg = getHumanizerConfig();
+  if(cfg.provider === 'off') return base;
+  return await humanizeWithInternalAI(base, userText, qualityMode);
+}
+
+async function callAI(userText, images, qualityMode){
+  const {provider, key} = getConfig();
+  if(!key) throw 'IA sem chave configurada';
+
+  const q = qualityMode || 'auto';
+  const styleIsAuto = currentStyles.includes('auto');
+  const toneIsAuto = currentTom === 'auto';
+  const modeIsAuto = q === 'auto';
+  const styleDesc = currentStyles.map(s=> STYLE_PROMPTS[s]||'').join('\n\n');
+  const extra = TOM_TXT[currentTom] || '';
+  const contexto = userText ? `PERFIL/BIO OU PEDIDO DO USUÁRIO: ${userText}` : 'Sem texto do usuário; use as fotos anexadas como base principal.';
+  const nFotos = images && images.length ? ` (${images.length} foto(s) anexada(s))` : '';
+
+  const toneExamples = (TONE_EXAMPLES[currentTom] || TONE_EXAMPLES.auto || TONE_EXAMPLES.leve).map(x=>' - "'+x+'"').join('\n');
+
+  const autoDetectionRules = `
+DETECÇÃO AUTOMÁTICA OBRIGATÓRIA:
+Antes de criar as mensagens, observe as fotos/perfil com atenção e escolha o melhor jeito de dar ideia nela.
+Avalie silenciosamente:
+- vibe da foto: casual, patricinha, alternativa, engraçada, séria, tímida, confiante, sensual discreta, romântica ou debochada;
+- melhor gancho: roupa, pose, olhar, sorriso, espelho, lugar, story, legenda, estilo ou detalhe visual real;
+- melhor abordagem: elogio leve, brincadeira, provocação, pergunta curta, comentário de story ou convite indireto;
+- risco de parecer forçado. Se parecer forçado, deixe mais simples.
+
+Se ESTILO, TOM ou MODO estiver como Automático, escolha internamente o melhor para a menina das fotos. Não explique a análise no texto da mensagem. Use o campo why só para resumir o motivo da escolha.
+`;
+
+  const humanRules = `
+PERSONAGEM:
+Você é um amigo real ajudando a mandar DM no Instagram. Não é assistente, não é terapeuta, não é copywriter.
+A resposta precisa parecer escrita no celular, na hora, sem revisão perfeita.
+
+REGRA PRINCIPAL:
+Soar humano vale mais do que soar bonito. Prefira naturalidade, leve imperfeição e frase simples. Faça a mensagem abrir espaço pra ela responder, sem pressionar.
+
+PROIBIDO TOTAL:
+- "olá", "oi, tudo bem?", "achei seu perfil interessante", "percebi que", "notei que", "gostaria de", "adorei sua vibe", "sua energia é contagiante".
+- texto com cara de cantada pronta, publicidade, coach, poema, frase motivacional ou IA.
+- elogio genérico demais: "linda", "gata", "maravilhosa" sozinho.
+- explicar o que está fazendo dentro da mensagem.
+- inventar nome, lugar, signo, personalidade ou detalhe que não apareceu.
+
+COMO ESCREVER:
+- Português brasileiro informal de direct/WhatsApp.
+- 1 ou 2 frases por opção. Pode ter "kkk" em no máximo 1 opção.
+- Pode usar: "pior que", "te falar", "na moral", "cê", "vou mentir não", "aí complica".
+- Use pontuação simples. Não precisa ser português perfeito demais.
+- Cada texto deve ser uma mensagem pronta pra copiar e mandar.
+- Se tiver foto/story, puxa um gancho visual sem parecer análise técnica.
+- Se tiver pouca informação, fala da vibe/clima sem afirmar demais.
+
+TOM ESCOLHIDO:
+${extra}
+
+EXEMPLOS DO TOM ESCOLHIDO, só pra seguir a vibe, NÃO copiar igual:
+${toneExamples}`;
+
+  const qualityPrompt = q==='auto' ?
+    `MODO AUTOMÁTICO:
+Observe as fotos/perfil e escolha sozinho o melhor nível de resposta: curta, caprichada, mais elaborada ou PRO.
+A prioridade é acertar o jeito de chegar nela, não seguir uma regra fixa.
+Gere 3 mensagens de direct naturais, cada uma usando um gancho real das fotos/perfil.
+Se a foto pedir algo mais leve, seja leve; se pedir provocação, provoque; se pedir humor, use humor.
+Inclua em cada why qual estilo/tom você escolheu e por quê, de forma curta.`
+  : q==='rapida' ? 
+    `Gere 3 mensagens de direct bem naturais. Curtas, humanas e copiáveis.`
+  : q==='caprichada' ?
+    `Gere 3 mensagens de direct bem naturais e diferentes entre si.
+Cada uma deve parecer que um cara real escreveu, usando o estilo e o tom escolhidos.
+Não corte frase pela metade. Não deixe com cara de IA.
+Inclua em cada uma um campo "why" curto explicando por que funciona.`
+  : q==='pro' ?
+    `MODO PRO GEMINI + INTERNET:
+Use Google Search para conferir rapidamente princípios atuais de mensagem inicial no Instagram/dating, sinais de mensagem que parece natural e o que costuma fazer alguém responder.
+Depois gere 3 mensagens prontas com alta chance de resposta, mas sem parecer técnica, sem parecer IA e sem mostrar pesquisa/citação no texto.
+Cada mensagem precisa soar como um cara real digitando no celular.
+Inclua "why" curto em cada uma dizendo por que ela pode puxar resposta.`
+  :
+    `Gere 3 mensagens de direct no modo mais humano possível.
+Leia a foto/bio silenciosamente e escolha ganchos naturais.
+A mensagem pode ser curta ou média, mas nunca texto artificial.
+Prioridade: parecer direct real de uma pessoa com atitude, no tom escolhido.
+Inclua "why" curto em cada uma.`;
+
+  const prompt = `${styleDesc}
+${extra}
+
+${contexto}${nFotos}
+
+${autoDetectionRules}
+
+${humanRules}
+
+${qualityPrompt}
+
+ANTES DE RESPONDER, confira internamente:
+1. Parece uma DM que uma pessoa real mandaria?
+2. Está no tom correto: ${toneIsAuto ? 'automático, escolhido pela vibe da foto' : (TOM_LABELS[currentTom] || currentTom)}?
+3. Se automático estiver ligado, você realmente escolheu o melhor estilo/tom/modo para essas fotos?
+4. Tem zero cara de IA/copy/palestra?
+5. Está completa, sem cortar no meio?
+
+Responda APENAS um JSON VÁLIDO, sem markdown e sem crases. Comece com { e termine com }.
+Formato obrigatório:
+{"aberturas":[{"titulo":"Opção 1","texto":"mensagem pronta para copiar","why":"motivo curto"},{"titulo":"Opção 2","texto":"mensagem pronta para copiar","why":"motivo curto"},{"titulo":"Opção 3","texto":"mensagem pronta para copiar","why":"motivo curto"}]}
+O campo texto deve conter SOMENTE a mensagem pronta, sem aspas extras, sem explicação, sem "abertura", sem "título" e sem JSON aparecendo na resposta.
+IMPORTANTE: termine todas as 3 respostas completas e naturais. Se Estilo/Tom/Modo estiver como Automático, use o campo why para dizer em poucas palavras o estilo/tom escolhido e o motivo.`;
+
+  // models
+  const isGroq = provider === 'groq';
+  const model = isGroq 
+    ? ((q==='mestre' || q==='pro' || q==='auto') ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant')
+    : (store.getItem('wingman_gemini_model') || ((q==='pro' || q==='auto') ? 'gemini-2.5-pro' : 'gemini-3.5-flash'));
+  const temperature = q==='rapida' ? 1.05 : q==='caprichada' ? 0.95 : q==='pro' ? 0.82 : q==='auto' ? 0.9 : 0.9;
+  const max_tokens = provider === 'groq' ? (q==='rapida' ? 2048 : 4096) : ((q==='pro' || q==='auto') ? 16384 : 8192);
+  const proMode = q === 'pro' || q === 'auto';
+
+  let txt = '';
+  if(isGroq){
+    let content = [{type:'text', text: prompt}];
+    if(images && images.length){ images.slice(0,4).forEach(im=> content.push({type:'image_url', image_url:{url: im.dataUrl}})); }
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body: JSON.stringify({ model, messages:[{role:'user', content}], temperature, max_tokens })
+    });
+    if(!res.ok){ const t = await res.text(); throw 'Groq ' + res.status + ' - ' + t.slice(0,200); }
+    const data = await res.json();
+    txt = data.choices?.[0]?.message?.content || '';
+  } else {
+    // Gemini - usa ListModels e tenta todos os modelos compatíveis com generateContent
+    const parts = [{text: prompt}];
+    if(images && images.length){
+      images.slice(0,4).forEach(im=>{
+        const b64 = im.dataUrl.split(',')[1];
+        parts.push({inline_data:{mime_type: im.mime || 'image/jpeg', data: b64}});
+      });
+    }
+
+    const candidates = await getGeminiCandidates(key, proMode);
+    let lastErr = '';
+    for(const cand of candidates){
+      try{
+        const thinkingConfig = buildThinkingConfig(cand.model, proMode);
+        const genConfigJson = {temperature, topP:0.95, maxOutputTokens: max_tokens, responseMimeType:'application/json'};
+        if(thinkingConfig) genConfigJson.thinkingConfig = thinkingConfig;
+        const genConfigPlain = {temperature, topP:0.95, maxOutputTokens: max_tokens};
+        if(thinkingConfig) genConfigPlain.thinkingConfig = thinkingConfig;
+        const extraBody = proMode ? {tools:[{google_search:{}}]} : {};
+
+        let res = await fetchGeminiGenerate(key, cand, parts, proMode ? genConfigPlain : genConfigJson, extraBody);
+        if(!res.ok){
+          const errTxt = await res.clone().text().catch(()=> '');
+          if(proMode && /tool|search|ground|unsupported|google_search|billing|permission/i.test(errTxt)){
+            res = await fetchGeminiGenerate(key, cand, parts, genConfigJson, {});
+          } else if(/responseMimeType|mime|json/i.test(errTxt)){
+            res = await fetchGeminiGenerate(key, cand, parts, genConfigPlain, extraBody);
+          }
+        }
+        if(res.ok){
+          const data = await res.json();
+          const c0 = data.candidates?.[0];
+          const finish = c0?.finishReason || '';
+          txt = (c0?.content?.parts || []).map(p=>p.text || '').join('');
+          if(finish === 'MAX_TOKENS'){
+            lastErr = cand.model+' @ '+cand.version+' cortou por limite de tokens. Tentando próximo modelo...';
+            txt = '';
+            continue;
+          }
+          if(txt){
+            store.setItem('wingman_gemini_model', cand.model);
+            store.setItem('wingman_gemini_version', cand.version);
+            break;
+          }
+          lastErr = cand.model+' @ '+cand.version+' retornou vazio';
+        } else {
+          lastErr = cand.model+' @ '+cand.version+' - '+(await res.text());
+        }
+      }catch(e){
+        lastErr = cand.model+' @ '+cand.version+' - '+String(e);
+      }
+    }
+    if(!txt) throw 'Gemini falhou em todos os modelos: ' + lastErr.slice(0,220);
+  }
+
+  // parse robusto: evita aparecer "aberturas", "titulo" etc. nos cards
+  const replies = postProcessReplies(parseAIReplies(txt));
+  if(replies.length===0) throw 'IA retornou vazio';
+  return replies;
+}
+
+function clearChat(){
+  removeTyping();
+  $('chat').innerHTML='';
+  $('textInput').value='';
+  clearImage();
+  addAIMessage('Chat limpo. Manda a próxima!');
+}
+
+// INIT
+(function init(){
+  const {provider, key} = getConfig();
+  store.setItem('wingman_provider', provider);
+  store.setItem('wingman_key_'+provider, key);
+  store.setItem('wingman_api_status', key ? 'ok' : 'fail');
+  const providerEl = document.getElementById('setProvider');
+  const keyEl = document.getElementById('setApiKey');
+  if(providerEl) providerEl.value = provider;
+  if(keyEl) keyEl.value = key;
+  const styleEl = document.getElementById('styleSelect');
+  if(styleEl) styleEl.value = currentStyles[0] || 'auto';
+  const toneEl = document.getElementById('toneSelect');
+  if(toneEl) toneEl.value = currentTom || 'auto';
+  const qualityEl = document.getElementById('qualitySelect');
+  if(qualityEl) qualityEl.value = quality || 'auto';
+  const hc = getHumanizerConfig();
+  if(document.getElementById('setHumanizerProvider')) document.getElementById('setHumanizerProvider').value = hc.provider;
+  if(document.getElementById('setHumanizerIntensity')) document.getElementById('setHumanizerIntensity').value = hc.intensity;
+  closeSettings();
+  updateModeLabel();
+  updateHint();
+  addAIMessage('WINGMAN IG 🔥v1.0 pronto\n\nIA ligada e humanizador interno ativo.\n\nDeixa Estilo, Tom e Modo em Automático pra IA observar as fotos e escolher o melhor jeito de dar ideia nela 👇');
+})();
+</script>
+</body>
+</html>
